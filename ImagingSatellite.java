@@ -5,9 +5,8 @@ public class ImagingSatellite extends Satellite {
 
     public ImagingSatellite(String name, double batteryLevel, double resolution)
     {
+        super(name, batteryLevel);
         this.name = name;
-        this.isActive = false;
-        this.batteryLevel = batteryLevel;
         this.resolution = resolution;
         this.photosTaken = 0;
 
@@ -18,9 +17,9 @@ public class ImagingSatellite extends Satellite {
     @Override
     protected void performMission()
     {
-        takePhoto();
-        if(isActive) {
-            consumeBattery(0.08);
+        if(state.isActive()) {
+            takePhoto();
+            energy.consume(0.08);
         }
     }
 
@@ -30,8 +29,8 @@ public class ImagingSatellite extends Satellite {
                 resolution,
                 photosTaken,
                 name,
-                isActive,
-                batteryLevel);
+                state.isActive(),
+                energy.getBatteryLevel());
     }
 
     // Геттер для получения скрытого поля resolution
@@ -49,7 +48,7 @@ public class ImagingSatellite extends Satellite {
     // Метод, который увеличивает счетчик фотографий, сделанных спутником, при условии, что спутник активен
     private void takePhoto()
     {
-        if(isActive) {
+        if(state.isActive()) {
             System.out.println(String.format("%s: Съемка территории с разрешением %.2f м/пиксель", name, resolution));
             photosTaken += 1;
             System.out.println(String.format("%s: Снимок %d сделан", name, photosTaken));

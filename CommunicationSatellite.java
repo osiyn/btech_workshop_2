@@ -4,9 +4,7 @@ public class CommunicationSatellite extends Satellite {
 
     public CommunicationSatellite(String name, double batteryLevel, double bandWidth)
     {
-        this.name = name;
-        this.isActive = false;
-        this.batteryLevel = batteryLevel;
+        super(name, batteryLevel);
         this.bandWith = bandWidth;
 
         System.out.println(String.format("Создан спутник: %s (заряд: %.2f%%, скорость передачи: %.2f Мбит/c)", name, batteryLevel * 100, bandWidth));
@@ -16,9 +14,9 @@ public class CommunicationSatellite extends Satellite {
     @Override
     protected void performMission()
     {
-        sendData(bandWith);
-        if(isActive) {
-            consumeBattery(0.05);
+        if(state.isActive()) {
+            sendData(bandWith);
+            energy.consume(0.05);
         }
     }
 
@@ -27,8 +25,8 @@ public class CommunicationSatellite extends Satellite {
         return String.format("CommunicationSatellite{bandwidth=%.2f, name=%s, isActive=%b, batteryLevel=%.2f}",
                 bandWith,
                 name,
-                isActive,
-                batteryLevel);
+                state.isActive(),
+                energy.getBatteryLevel());
     }
 
     // Геттер для получения скрытого поля bandWidth
@@ -40,7 +38,7 @@ public class CommunicationSatellite extends Satellite {
     // Метод, который выводит в консоль информацию о количестве переданных данных (срабатывает, если спутник активен)
     private void sendData(double sendData)
     {
-        if(isActive) {
+        if(state.isActive()) {
             System.out.println(String.format("%s: Передача данных со скоростью %.2f Мбит/с", name, bandWith));
             System.out.println(String.format("%s: Отправил %.2f Мбит данных!", name, sendData));
         } else {

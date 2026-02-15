@@ -1,52 +1,45 @@
-abstract class Satellite
+public abstract class Satellite
 {
     protected String name; // Название
-    protected boolean isActive; // Флаг активности
-    protected double batteryLevel; // Уровень заряда
-
-    public Satellite()
-    {
-        this.name = "Undefine";
-        this.isActive = false;
-        this.batteryLevel = 1.0;
-    }
+    protected SatelliteState state; // Флаг активности
+    protected EnergySystem energy;
 
     public Satellite(String name, double batteryLevel)
     {
         this.name = name;
-        this.isActive = false;
-        this.batteryLevel = batteryLevel;
+        this.state = new SatelliteState();
+        this.energy = new EnergySystem(batteryLevel);
+    }
+
+    public SatelliteState getState() {
+        return state;
+    }
+
+    public EnergySystem getEnergy() {
+        return energy;
     }
     
     // Метод включения спутника (спутник включается, если уровень заряда больше 0.2)
     public boolean activate() {
-        if(batteryLevel > 0.2) {
-            isActive = true;
+        if(state.activate(energy.hasSufficientPower())) {
             System.out.println(String.format("%s: Активация успешна", name));
             return true;
         } else {
-            System.out.println(String.format("%s: Ощибка активации (заряд %.2f%%)", name, batteryLevel * 100));
+            System.out.println(String.format("%s: Ощибка активации (заряд %.2f%%)", name, energy.getBatteryLevel() * 100));
             return false;
         }
     }
 
     // Метод выключения спутника (только если он был включен)
     public void deactivate() {
-        if(isActive) {
-            isActive = false;
-        }
-    }
-
-    //  Метод потребления энергии спутником при выполнении миссии
-    public void consumeBattery(double consumeBatt) {
-        batteryLevel -= consumeBatt;
-        if(batteryLevel <= 0.2) {
-            deactivate();
+        if(state.isActive()) {
+            state.deactivate();
+            System.out.println(String.format("%s: Деактивирован", name));
         }
     }
 
     // Метод выполнения миссии
-    abstract protected void performMission();
+    abstract public void performMission();
 
     public String getName()
     {
