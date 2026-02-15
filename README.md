@@ -1,1 +1,9 @@
-# btech_workshop_2
+# btech_workshop_1
+
+
+## Build
+
+```bash
+$ javac Main.java
+$ java Main
+```
